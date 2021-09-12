@@ -6,7 +6,7 @@
         ? 'warm'
         : ''
     "
-    >
+  >
     <main>
       <div class="search-box">
         <input
@@ -151,10 +151,10 @@ body {
   background-position: bottom;
   transition: 0.4s;
 }
-#clear{
-  
+#app.warm {
+  background-image: url("./assets/warm2.gif");
 }
-#rain {
+#app.rain {
   background-image: url("/src/assets/rain.gif");
 }
 main {
@@ -238,7 +238,6 @@ main {
   align-items: center;
   justify-content: center;
 }
-
 h2 {
   color: white;
 }
