@@ -2,11 +2,11 @@
   <div
     id="app"
     :class="
-      typeof weather.main != 'undefined' && Math.round(weather.main.temp) > 22
+      typeof weather.main != 'undefined' && Math.round(weather.main.temp) > 20
         ? 'warm'
         : ''
     "
-  >
+    >
     <main>
       <div class="search-box">
         <input
@@ -15,6 +15,7 @@
           placeholder="Search..."
           v-model="query"
           @keypress="fetchWeather"
+          @mouseenter="getClock"
         />
       </div>
       <div class="weather-wrap" v-if="typeof weather.main != 'undefined'">
@@ -23,7 +24,20 @@
             {{ weather.name }}, {{ weather.sys.country }}
           </div>
           <div class="date">{{ dateBuilder() }}</div>
+          <div class="clock">
+            <div class="bg2">
+              <h2 class="s">{{ day }}</h2>
+            </div>
+            <div class="bg">
+              <h2 id="h">{{ hours }}</h2>
+            </div>
+            <h2>:</h2>
+            <div class="bg">
+              <h2 id="m">{{ minutes }}</h2>
+            </div>
+          </div>
         </div>
+        <div class="clock"></div>
         <div class="weather-box">
           <div class="temp">{{ weather.main.temp }}℃</div>
           <div class="weather">{{ weather.weather[0].main }}</div>
@@ -35,6 +49,10 @@
 
 <script>
 export default {
+  clock: function () {
+    return { hours: 0, minutes: 0 };
+  },
+
   data: function () {
     return {
       api_key: "203a7ce25e898c0f80c7e8316fb90304",
@@ -44,6 +62,29 @@ export default {
     };
   },
   methods: {
+    getClock() {
+      const date = new Date();
+
+      if (date.getHours() > 13) {
+        this.hours = date.getHours() - 12;
+      } else if (date.getHours() == 0) {
+        this.hours = 12;
+      } else {
+        this.hours = date.getHours();
+      }
+      this.minutes = this.PadStartMinutes(date.getMinutes());
+    },
+    setTime() {
+      setInterval(this.getClock, 1000);
+    },
+    PadStartMinutes(digit) {
+      return ("0" + digit).slice(-2);
+    },
+
+    mounted() {
+      this.setTime();
+    },
+
     fetchWeather: function (e) {
       if (e.key == "Enter") {
         let fetchUrl = `${this.url_base}weather?q=${this.query}&units=metric&APPID=${this.api_key}`;
@@ -63,33 +104,33 @@ export default {
     dateBuilder: function () {
       let d = new Date();
       let months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
+        "1월",
+        "2월",
+        "3월",
+        "4월",
+        "5월",
+        "6월",
+        "7월",
+        "8월",
+        "9월",
+        "10월",
+        "11월",
+        "12월",
       ];
       let days = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
+        "일요일",
+        "월요일",
+        "화요일",
+        "수요일",
+        "목요일",
+        "금요일",
+        "토요일",
       ];
       let day = days[d.getDay()];
       let date = d.getDate();
       let month = months[d.getMonth()];
       let year = d.getFullYear();
-      return `${day} ${date} ${month} ${year}`;
+      return `${year}년 ${month} ${date}일 ${day}`;
     },
   },
 };
@@ -105,13 +146,16 @@ body {
   font-family: "montserrat", sans-serif;
 }
 #app {
-  background-image: url("./assets/cold-bg.jpg");
+  background-image: url("./assets/question.gif");
   background-size: cover;
   background-position: bottom;
   transition: 0.4s;
 }
-#app.warm {
-  background-image: url("./assets/warm-bg.jpg");
+#clear{
+  
+}
+#rain {
+  background-image: url("/src/assets/rain.gif");
 }
 main {
   min-height: 100vh;
@@ -177,9 +221,54 @@ main {
 }
 .weather-box .weather {
   color: #fff;
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 700;
   font-style: italic;
   text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
 }
+.clock {
+  color: #000;
+  font-size: 56px;
+  text-align: center;
+  position: relative;
+  top: 50%;
+  left: 43%;
+  transform: translate(-51%, 8%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+h2 {
+  color: white;
+}
+
+.bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4em;
+  height: 3em;
+  background: inherit;
+  position: relative;
+  border-radius: 30%;
+  box-shadow: inset -2px -2px 5px rgba(255, 255, 255, 1),
+    inset 3px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.bg2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4em;
+  height: 4em;
+  font-size: 25px;
+  position: relative;
+  border-radius: 30%;
+}
+
+#m {
+  margin: 0 10px;
+}
 </style>
+
